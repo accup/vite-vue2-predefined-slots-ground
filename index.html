@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app">
+      <provider
+        :data="{
+          numbers: Array.from({ length: 10 }, (_, i) => i),
+          mode: 'asc',
+          mod: 5,
+        }"
+        v-slot="{ data }"
+      >
+        <provider
+          :computed="{
+            items: () => data.numbers.map(
+              (i) => ({
+                asc: i,
+                desc: -i,
+                mod_asc: i % data.mod,
+                mod_desc: -(i % data.mod),
+              })
+            )
+          }"
+          v-slot="{ computed }"
+        >
+          <actions
+            :mode.sync="data.mode"
+            :mod.sync="data.mod"
+            @push="data.numbers.push(data.numbers.length)"
+            @pop="data.numbers.pop()"
+          ></actions>
+          <list :items="computed.items" :order-by="data.mode">
+            <template #[index] v-for="(item, index) in data.numbers">
+              {{ item }}
+            </template>
+          </list>
+        </provider>
+      </provider>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
